@@ -21,20 +21,20 @@ public class Path {
     private List<Point> points;
 
 
-    public Path generateRandomPath(Tuple<Point, Point> positions, int maxSteps) {
+    public Path generateRandomPath(Tuple<Point, Point> positions, int maxSteps, Tuple<Integer, Integer> dims) {
         Point start = positions.getFirst();
         Point end = positions.getSecond();
         List<Tuple<Direction, Integer>> path = new ArrayList<>();
-        List<Point> points = new ArrayList<>();
+        List<Point> points = new ArrayList<> ();
         int length = 0;
 
         Point currentPosition = new Point(start.getX(), start.getY());
         Direction previousDirection = Direction.UNKNOWN;
         Direction currentDirection = Direction.UNKNOWN;
-
+        Tuple<Point, List<Point>> helper;
         int iteration = 0;
         while (!currentPosition.equals(end)) {
-            if (iteration >= maxSteps || iteration == 0) {
+            if (iteration >= maxSteps) {
                 iteration = 0;
                 path.clear();
                 currentPosition.setX(start.getX());
@@ -46,16 +46,53 @@ public class Path {
             }
 
             currentDirection = determineDirection(currentPosition, end, previousDirection);
-            int distance = determineDistance(currentPosition, end, currentDirection);
+            int distance = determineDistance(currentPosition, end, currentDirection, dims);
             path.add(new Tuple<>(currentDirection, distance));
-            currentPosition = calculatePosition(currentPosition, currentDirection, distance);
-            points.add(new Point(currentPosition.getX(), currentPosition.getY()));
+            helper = calculateNewPositionAndPoints(currentPosition, currentDirection, distance);
+            currentPosition = helper.getFirst();
+//            currentPosition = calculatePosition(currentPosition, currentDirection, distance);
+//            points.add(new Point(currentPosition.getX(), currentPosition.getY()));
+            points.addAll(helper.getSecond());
             previousDirection = currentDirection;
             iteration++;
             length += distance;
         }
-
+        points.add(end);
         return new Path(path, length, points);
+    }
+
+    public List<Point> getPointsFromPath(Point start, Point end, List<Tuple<Direction, Integer>> path) {
+        List<Point> points = new ArrayList<>();
+        points.add(start);
+
+        return points;
+    }
+
+    private Tuple<Point, List<Point>> calculateNewPositionAndPoints(Point currentPosition, Direction currentDirection, int distance) {
+        List<Point> points = new ArrayList<>();
+        if(currentDirection == Direction.UP) {
+            for(int i = 0; i < distance; i++) {
+                points.add(new Point(currentPosition.getX(), currentPosition.getY() + i));
+            }
+            currentPosition.setY(currentPosition.getY() + distance);
+        } else if (currentDirection == Direction.DOWN) {
+            for(int i = 0; i < distance; i++) {
+                points.add(new Point(currentPosition.getX(), currentPosition.getY() - i));
+            }
+            currentPosition.setY(currentPosition.getY() - distance);
+        } else if (currentDirection == Direction.LEFT) {
+            for(int i = 0; i < distance; i++) {
+                points.add(new Point(currentPosition.getX() - i, currentPosition.getY()));
+            }
+            currentPosition.setX(currentPosition.getX() - distance);
+        } else {
+            for(int i = 0; i < distance; i++) {
+                points.add(new Point(currentPosition.getX() + i, currentPosition.getY()));
+            }
+            currentPosition.setX(currentPosition.getX() + distance);
+        }
+
+        return new Tuple(currentPosition, points);
     }
 
     private Point calculatePosition(Point currentPosition, Direction currentDirection, int distance) {
@@ -72,16 +109,18 @@ public class Path {
         return currentPosition;
     }
 
-    private int determineDistance(Point currentPosition, Point end, Direction currentDirection) {
+    private int determineDistance(Point currentPosition, Point end, Direction currentDirection, Tuple<Integer, Integer> dims) {
         //determine distance to travel per segment
         //think of implementing method based on PCB size so that you always achieve great results
         Random r = new Random();
         if(currentDirection == Direction.DOWN || currentDirection == Direction.UP) {
 //            return r.nextInt(Math.random() * Math.abs(currentPosition.getY() - end.getY()) - 1) + 1;
-            return (int) (Math.random() * (Math.abs(currentPosition.getY() - end.getY()) - 1)) + 1;
+//            return (int) (Math.random() * (Math.abs(currentPosition.getY() - end.getY()) - 1)) + 1;
+            return (int) (Math.random() * (Math.abs(currentPosition.getY() - dims.second))) + 1;
         } else {
 //            return r.nextInt(Math.abs(currentPosition.getX() - end.getX()) - 1) + 1;
-            return (int) (Math.random() * (Math.abs(currentPosition.getX() - end.getX()) - 1)) + 1;
+//            return (int) (Math.random() * (Math.abs(currentPosition.getX() - end.getX()) - 1)) + 1;
+            return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
         }
     }
 

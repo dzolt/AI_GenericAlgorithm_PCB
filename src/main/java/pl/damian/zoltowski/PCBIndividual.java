@@ -5,7 +5,10 @@ import pl.damian.zoltowski.utils.Constants;
 import pl.damian.zoltowski.utils.Tuple;
 
 import java.util.ArrayList;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Data
@@ -15,6 +18,7 @@ public class PCBIndividual {
     private List<Tuple<Point, Point>> points;
     private List<Path> population;
     private double fitness = 0;
+    private int inters = 0;
 
     public PCBIndividual(Config config) {
         this.pcbWidth = config.getPcb_width();
@@ -25,9 +29,10 @@ public class PCBIndividual {
 
     public void initPopulation(int maxStepsToFindAPath) {
         //for each pair of points that is present on the board
+        Tuple<Integer, Integer> dims = new Tuple<>(pcbWidth, pcbHeight);
         for(int i = 0; i < points.size(); i++) {
             population.add(new Path()
-                    .generateRandomPath(points.get(i), maxStepsToFindAPath)
+                    .generateRandomPath(points.get(i), maxStepsToFindAPath, dims)
             );
         }
     }
@@ -43,19 +48,30 @@ public class PCBIndividual {
     }
 
     private int calculateIntersections(List<Path> population) {
-        int sumOfInteresctions = 0;
+        int sumOfIntersections = 0;
         for(Path path1: population){
             for (Path path2: population) {
                 if(path1 != path2) {
                    for(Point point: path1.getPoints()) {
                        if(path2.getPoints().contains(point)) {
-                           sumOfInteresctions++;
+                           sumOfIntersections++;
                        }
                    }
+                } else {
+                    Map<Point, Integer> potentialOwnIntersections = new HashMap<>();
+                    for(Point ownPoint: path1.getPoints()) {
+                        if(potentialOwnIntersections.containsKey(ownPoint)) {
+                            sumOfIntersections++;
+                            potentialOwnIntersections.put(ownPoint, potentialOwnIntersections.get(ownPoint) + 1);
+                        } else {
+                            potentialOwnIntersections.put(ownPoint, 0);
+                        }
+                    }
                 }
             }
         }
-        return sumOfInteresctions;
+        this.inters = sumOfIntersections;
+        return sumOfIntersections;
     }
 
     private int calculateSumOfPathsOutOfBoard(List<Path> population) {

@@ -28,7 +28,7 @@ public class GenericAlgorithmPCBApplication {
 
         System.out.println("BEST POPULATION: ");
         PCBIndividual best = population.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get();
-        System.out.println(best + " ---------> SCORED: " + best.getFitness());
+        System.out.println(best + " ---------> SCORED: " + best.getFitness() + "-->>>> " + best.getInters());
 
 //        PCBIndividual individual = new PCBIndividual(config);
 //        individual.initPopulation(Constants.MAX_STEPS_INDIVIDUAL_GENERATION);
