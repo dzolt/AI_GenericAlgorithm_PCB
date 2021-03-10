@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static pl.damian.zoltowski.utils.Constants.PROBABILITY_OF_DIRECTION_INCREASE;
 
@@ -31,22 +30,40 @@ public class Individual {
         Direction currentDirection = Direction.UNKNOWN;
 
         int iteration = 0;
-        while (currentPosition != end) {
+        while (!currentPosition.equals(end)) {
+            System.out.println(currentPosition);
+            System.out.println(end);
             if (iteration >= maxSteps) {
                 iteration = 0;
                 path.clear();
                 currentPosition = start;
+                previousDirection = Direction.UNKNOWN;
             }
 
             currentDirection = determineDirection(currentPosition, end, previousDirection);
             int distance = determineDistance(currentPosition, end, currentDirection);
             path.add(new Tuple<>(currentDirection, distance));
-
+            currentPosition = calculatePosition(currentPosition, currentDirection, distance);
             previousDirection = currentDirection;
             iteration++;
         }
 
         return new Individual(path);
+    }
+
+    private Point calculatePosition(Point currentPosition, Direction currentDirection, int distance) {
+
+        if(currentDirection == Direction.UP) {
+            currentPosition.setY(currentPosition.getY() + distance);
+        } else if (currentDirection == Direction.DOWN) {
+            currentPosition.setY(currentPosition.getY() - distance);
+        } else if (currentDirection == Direction.LEFT) {
+            currentPosition.setX(currentPosition.getX() - distance);
+        } else {
+            currentPosition.setX(currentPosition.getX() + distance);
+        }
+
+        return currentPosition;
     }
 
     private int determineDistance(Point currentPosition, Point end, Direction currentDirection) {
@@ -107,6 +124,5 @@ public class Individual {
 
         return chosenDirection.getFirst();
     }
-
 
 }
