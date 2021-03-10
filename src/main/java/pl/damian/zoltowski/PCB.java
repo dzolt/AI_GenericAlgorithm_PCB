@@ -1,10 +1,12 @@
 package pl.damian.zoltowski;
 
+import lombok.Data;
 import pl.damian.zoltowski.utils.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class PCB {
     private int pcbWidth;
     private int pcbHeight;
@@ -18,8 +20,13 @@ public class PCB {
         this.population = new ArrayList<>();
     }
 
-    public void initPopulation(int x) {
-
+    public void initPopulation(int maxStepsToFindAPath) {
+        //for each pair of points that is present on the board
+        for(int i = 0; i < points.size(); i++) {
+            population.add(new Individual()
+                    .generateRandomIndividual(points.get(i), maxStepsToFindAPath)
+            );
+        }
     }
 
 }
