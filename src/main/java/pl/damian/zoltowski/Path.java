@@ -3,12 +3,10 @@ package pl.damian.zoltowski;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.damian.zoltowski.utils.Constants;
 import pl.damian.zoltowski.utils.Direction;
 import pl.damian.zoltowski.utils.Tuple;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -17,42 +15,50 @@ import static pl.damian.zoltowski.utils.Constants.PROBABILITY_OF_DIRECTION_INCRE
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Individual {
+public class Path {
     private List<Tuple<Direction, Integer>> segments;
+    private int length;
+    private List<Point> points;
 
-    public Individual generateRandomIndividual(Tuple<Point, Point> positions, int maxSteps) {
+
+    public Path generateRandomPath(Tuple<Point, Point> positions, int maxSteps) {
         Point start = positions.getFirst();
         Point end = positions.getSecond();
         List<Tuple<Direction, Integer>> path = new ArrayList<>();
+        List<Point> points = new ArrayList<>();
+        int length = 0;
 
-        Point currentPosition = start;
+        Point currentPosition = new Point(start.getX(), start.getY());
         Direction previousDirection = Direction.UNKNOWN;
         Direction currentDirection = Direction.UNKNOWN;
 
         int iteration = 0;
         while (!currentPosition.equals(end)) {
-            System.out.println(currentPosition);
-            System.out.println(end);
-            if (iteration >= maxSteps) {
+            if (iteration >= maxSteps || iteration == 0) {
                 iteration = 0;
                 path.clear();
-                currentPosition = start;
+                currentPosition.setX(start.getX());
+                currentPosition.setY(start.getY());
                 previousDirection = Direction.UNKNOWN;
+                length = 0;
+                points.clear();
+                points.add(start);
             }
 
             currentDirection = determineDirection(currentPosition, end, previousDirection);
             int distance = determineDistance(currentPosition, end, currentDirection);
             path.add(new Tuple<>(currentDirection, distance));
             currentPosition = calculatePosition(currentPosition, currentDirection, distance);
+            points.add(new Point(currentPosition.getX(), currentPosition.getY()));
             previousDirection = currentDirection;
             iteration++;
+            length += distance;
         }
 
-        return new Individual(path);
+        return new Path(path, length, points);
     }
 
     private Point calculatePosition(Point currentPosition, Direction currentDirection, int distance) {
-
         if(currentDirection == Direction.UP) {
             currentPosition.setY(currentPosition.getY() + distance);
         } else if (currentDirection == Direction.DOWN) {
@@ -121,7 +127,6 @@ public class Individual {
                 chosenDirection = prob;
             }
         }
-
         return chosenDirection.getFirst();
     }
 
