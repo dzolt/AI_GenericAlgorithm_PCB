@@ -1,10 +1,10 @@
-package pl.damian.zoltowski;
+package pl.damian.zoltowski.pcb;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import pl.damian.zoltowski.utils.Direction;
-import pl.damian.zoltowski.utils.Tuple;
+import pl.damian.zoltowski.utils.dataType.Point;
+import pl.damian.zoltowski.utils.dataType.Tuple;
 
 import java.util.ArrayList;
 import java.util.List;

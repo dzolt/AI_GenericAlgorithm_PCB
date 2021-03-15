@@ -1,7 +1,10 @@
 package pl.damian.zoltowski.utils;
 
-import pl.damian.zoltowski.Config;
-import pl.damian.zoltowski.Point;
+import pl.damian.zoltowski.utils.dataType.Point;
+import pl.damian.zoltowski.utils.dataType.Tuple;
+import pl.damian.zoltowski.utils.exception.InvalidDataInFileException;
+import pl.damian.zoltowski.utils.exception.InvalidDimensionDataException;
+import pl.damian.zoltowski.utils.exception.InvalidPointsEntryDataException;
 
 import java.net.URI;
 import java.net.URL;

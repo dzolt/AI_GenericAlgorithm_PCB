@@ -1,4 +1,4 @@
-package pl.damian.zoltowski.utils;
+package pl.damian.zoltowski.pcb;
 
 public enum Direction {
     LEFT,

@@ -1,4 +1,4 @@
-package pl.damian.zoltowski.utils;
+package pl.damian.zoltowski.utils.dataType;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
