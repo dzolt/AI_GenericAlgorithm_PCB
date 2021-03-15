@@ -1,11 +1,17 @@
 package pl.damian.zoltowski.pcb;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
+import com.google.gson.annotations.Expose;
 import lombok.Data;
 import pl.damian.zoltowski.utils.Config;
 import pl.damian.zoltowski.utils.dataType.Point;
 import pl.damian.zoltowski.utils.Constants;
 import pl.damian.zoltowski.utils.dataType.Tuple;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +25,7 @@ public class PCBIndividual {
     private List<Tuple<Point, Point>> points;
     private List<Path> population;
     private double fitness = 0;
+    @Expose(serialize = false)
     private int inters = 0;
 
     public PCBIndividual(Config config) {
@@ -90,6 +97,25 @@ public class PCBIndividual {
 
     private int calculateLength(List<Path> population) {
         return population.stream().mapToInt(Path::getLength).sum();
+    }
+
+    private void jsonify(String fileName) throws IOException {
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        JsonSerializer<PCBIndividual> serializer = new PCBJsonSerializer();
+        gsonBuilder.registerTypeAdapter(PCBIndividual.class, serializer);
+        String filePath = System.getProperty("user.dir") + "\\src\\main\\java\\pl\\damian\\zoltowski\\visualization\\data\\" + fileName;
+        try (Writer writer = new FileWriter(filePath)) {
+            gsonBuilder.create().toJson(this, writer);
+        }
+    }
+
+    public void saveIndividualToFile(String fileName) {
+        try {
+            this.jsonify(fileName);
+            //out.println(this.jsonify());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
