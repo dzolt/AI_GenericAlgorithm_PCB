@@ -45,7 +45,7 @@ public class Path {
                 points.add(start);
             }
 
-            currentDirection = determineDirection(currentPosition, end, previousDirection);
+            currentDirection = determineDirection(currentPosition, end, previousDirection, dims.getFirst(), dims.getSecond());
             int distance = determineDistance(currentPosition, end, currentDirection, dims);
             path.add(new Tuple<>(currentDirection, distance));
             helper = calculateNewPositionAndPoints(currentPosition, currentDirection, distance);
@@ -114,17 +114,22 @@ public class Path {
         //think of implementing method based on PCB size so that you always achieve great results
         Random r = new Random();
         if(currentDirection == Direction.DOWN || currentDirection == Direction.UP) {
-//            return r.nextInt(Math.random() * Math.abs(currentPosition.getY() - end.getY()) - 1) + 1;
-//            return (int) (Math.random() * (Math.abs(currentPosition.getY() - end.getY()) - 1)) + 1;
             return (int) (Math.random() * (Math.abs(currentPosition.getY() - dims.second))) + 1;
         } else {
-//            return r.nextInt(Math.abs(currentPosition.getX() - end.getX()) - 1) + 1;
-//            return (int) (Math.random() * (Math.abs(currentPosition.getX() - end.getX()) - 1)) + 1;
             return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
         }
+//        if(currentDirection == Direction.UP) {
+//            return (int) (Math.random() * (dims.getSecond() - currentPosition.getY())) + 1;
+//        } else if(currentDirection == Direction.DOWN) {
+//            return r.nextInt(currentPosition.getY());
+//        } else if(currentDirection == Direction.LEFT) {
+//            return r.nextInt(currentPosition.getX());
+//        } else {
+//            return (int) (Math.random() * (dims.getFirst() - currentPosition.getX())) + 1;
+//        }
     }
 
-    private Direction determineDirection(Point currentPosition, Point endPosition, Direction previousDirection) {
+    private Direction determineDirection(Point currentPosition, Point endPosition, Direction previousDirection, int pcbWidth, int pcbHeight) {
         Tuple<Direction, Integer> upProbability = new Tuple<>(Direction.UP, 1);
         Tuple<Direction, Integer> downProbability = new Tuple<>(Direction.DOWN, 1);
         Tuple<Direction, Integer> leftProbability = new Tuple<>(Direction.LEFT, 1);
@@ -154,12 +159,23 @@ public class Path {
                 leftProbability.second = 0;
             }
         }
+        if(currentPosition.getX() == 0) {
+            leftProbability.second = 0;
+        } else if(pcbWidth - currentPosition.getX() < 1) {
+            rightProbability.second = 0;
+        }
+
+        if(currentPosition.getY() == 0) {
+            downProbability.second = 0;
+        } else if(pcbHeight - currentPosition.getY() < 1) {
+            upProbability.second = 0;
+        }
         return chooseDirection(listOfProbabilities);
     }
 
     private Direction chooseDirection(List<Tuple<Direction, Integer>> listOfProbabilities) {
         Random r = new Random();
-        listOfProbabilities.forEach(el -> el.second *= r.nextInt(15));
+        listOfProbabilities.forEach(el -> el.second *= r.nextInt(100));
         Tuple<Direction, Integer> chosenDirection = listOfProbabilities.get(0);
         for(Tuple<Direction, Integer> prob: listOfProbabilities) {
             if(prob.second > chosenDirection.second) {

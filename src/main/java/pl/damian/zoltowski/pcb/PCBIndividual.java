@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
 import com.google.gson.annotations.Expose;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import pl.damian.zoltowski.utils.Config;
 import pl.damian.zoltowski.utils.dataType.Point;
 import pl.damian.zoltowski.utils.Constants;
@@ -25,13 +26,19 @@ public class PCBIndividual {
     private List<Tuple<Point, Point>> points;
     private List<Path> population;
     private double fitness = 0;
-    @Expose(serialize = false)
     private int inters = 0;
 
     public PCBIndividual(Config config) {
         this.pcbWidth = config.getPcb_width();
         this.pcbHeight = config.getPcb_height();
         this.points = config.getPoints();
+        this.population = new ArrayList<>();
+    }
+
+    public PCBIndividual() {
+        this.pcbWidth = -1;
+        this.pcbHeight = -1;
+        this.points = new ArrayList<>();
         this.population = new ArrayList<>();
     }
 
@@ -112,7 +119,6 @@ public class PCBIndividual {
     public void saveIndividualToFile(String fileName) {
         try {
             this.jsonify(fileName);
-            //out.println(this.jsonify());
         } catch (IOException e) {
             e.printStackTrace();
         }
