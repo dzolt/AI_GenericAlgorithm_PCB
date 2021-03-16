@@ -42,6 +42,15 @@ public class PCBIndividual {
         this.population = new ArrayList<>();
     }
 
+    public PCBIndividual(PCBIndividual individual) {
+        this.pcbWidth = individual.pcbWidth;
+        this.pcbHeight = individual.pcbHeight;
+        this.points = individual.points;
+        this.population = individual.population;
+        this.fitness = individual.fitness;
+        this.inters = individual.inters;
+    }
+
     public void initPopulation(int maxStepsToFindAPath) {
         //for each pair of points that is present on the board
         Tuple<Integer, Integer> dims = new Tuple<>(pcbWidth, pcbHeight);

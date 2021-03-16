@@ -5,5 +5,5 @@ import pl.damian.zoltowski.pcb.PCBIndividual;
 import java.util.List;
 
 public interface SelectionAlgorithm {
-    PCBIndividual select(List<PCBIndividual> pathsInIndividual);
+    PCBIndividual select(List<PCBIndividual> population);
 }
