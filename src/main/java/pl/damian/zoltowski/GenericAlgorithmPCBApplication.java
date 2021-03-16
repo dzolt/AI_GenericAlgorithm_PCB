@@ -26,6 +26,7 @@ public class GenericAlgorithmPCBApplication {
         PythonProcessBuilder pythonProcessBuilder = new PythonProcessBuilder();
         CrossOverAlgorithm crossing = new MultiPointCrossover();
         MutationAlgorithm mutation = new SimpleMutation();
+        List<PCBIndividual> bestFromPopulations = new ArrayList<>();
 
         // create population consisting of POPULATION_SIZE PCBIndividuals
         for (int i = 0; i < Constants.POPULATION_SIZE; i++) {
@@ -35,16 +36,37 @@ public class GenericAlgorithmPCBApplication {
             population.add(individual);
         }
 
-        for (int i = 0; i < Constants.POPULATION_OPERATORS_STOP_CONDITION; i++) {
+        bestFromPopulations.add(population.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get());
 
-            System.out.println(selectionAlgorithm.select(population).getFitness());
+        for (int i = 0; i < Constants.POPULATION_OPERATORS_STOP_CONDITION; i++) {
+           List<PCBIndividual> newPopulation = new ArrayList<>();
+           while(newPopulation.size() != population.size()) {
+               PCBIndividual parent1 = selectionAlgorithm.select(population);
+               PCBIndividual parent2 = selectionAlgorithm.select(population);;
+               PCBIndividual child = crossing.cross(parent1, parent2);
+               child = mutation.mutate(child);
+               child.calculateFitness();
+               newPopulation.add(child);
+           }
+           bestFromPopulations.add(newPopulation.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get());
+           population = newPopulation;
+            System.out.println("POPULATION " + i);
         }
 
-        System.out.println("BEST POPULATION: ");
-        PCBIndividual best = population.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get();
-        System.out.println(best + " ---------> SCORED: " + best.getFitness() + "-->>>> " + best.getInters());
-        best.saveIndividualToFile("best.json");
-        pythonProcessBuilder.generatePCBImageToFile("best.json", "result.png");
+        int index = 0;
+        for(PCBIndividual best: bestFromPopulations) {
+//            System.out.println(best);
+            best.saveIndividualToFile("population" + index + ".json");
+            pythonProcessBuilder.generatePCBImageToFile("population" + index + ".json", "population" + index + ".png");
+            index++;
+        }
+
+
+//        System.out.println("BEST POPULATION: ");
+//        PCBIndividual best = population.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get();
+//        System.out.println(best + " ---------> SCORED: " + best.getFitness() + "-->>>> " + best.getInters());
+//        best.saveIndividualToFile("best.json");
+//        pythonProcessBuilder.generatePCBImageToFile("best.json", "result.png");
 
 //        PCBIndividual parent1 = new PCBIndividual(config);
 //        PCBIndividual parent2 = new PCBIndividual(config);

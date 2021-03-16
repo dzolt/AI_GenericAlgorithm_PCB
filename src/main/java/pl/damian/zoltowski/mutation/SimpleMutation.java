@@ -19,6 +19,7 @@ public class SimpleMutation implements MutationAlgorithm{
             if( r.nextDouble() < MUTATION_PROBABILITY) {
                 Path mutatedPath = new Path().generateRandomPath(individual.getPoints().get(i), Constants.MAX_STEPS_INDIVIDUAL_GENERATION, dims);
                 mutant.getPopulation().set(i, mutatedPath);
+                System.out.println("MUTATED");
             }
         }
         mutant.calculateFitness();
