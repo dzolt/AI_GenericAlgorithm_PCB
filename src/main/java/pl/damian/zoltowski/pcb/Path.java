@@ -15,7 +15,7 @@ import static pl.damian.zoltowski.utils.Constants.PROBABILITY_OF_DIRECTION_INCRE
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Path {
+public class Path implements Cloneable{
     private List<Tuple<Direction, Integer>> segments;
     private int length;
     private List<Point> points;
@@ -50,8 +50,6 @@ public class Path {
             path.add(new Tuple<>(currentDirection, distance));
             helper = calculateNewPositionAndPoints(currentPosition, currentDirection, distance);
             currentPosition = helper.getFirst();
-//            currentPosition = calculatePosition(currentPosition, currentDirection, distance);
-//            points.add(new Point(currentPosition.getX(), currentPosition.getY()));
             points.addAll(helper.getSecond());
             previousDirection = currentDirection;
             iteration++;
@@ -61,10 +59,15 @@ public class Path {
         return new Path(path, length, points);
     }
 
-    public List<Point> getPointsFromPath(Point start, Point end, List<Tuple<Direction, Integer>> path) {
+    public List<Point> getPointsFromSegments(Point start, Point end, List<Tuple<Direction, Integer>> segments) {
         List<Point> points = new ArrayList<>();
+        Point currentPos = start;
         points.add(start);
-
+        for(Tuple<Direction, Integer> segment: segments) {
+            Tuple<Point, List<Point>> newPositionAndPoints = calculateNewPositionAndPoints(currentPos, segment.getFirst(), segment.getSecond());
+            currentPos = newPositionAndPoints.getFirst();
+            points.addAll(newPositionAndPoints.getSecond());
+        }
         return points;
     }
 
@@ -95,20 +98,6 @@ public class Path {
         return new Tuple(currentPosition, points);
     }
 
-    private Point calculatePosition(Point currentPosition, Direction currentDirection, int distance) {
-        if(currentDirection == Direction.UP) {
-            currentPosition.setY(currentPosition.getY() + distance);
-        } else if (currentDirection == Direction.DOWN) {
-            currentPosition.setY(currentPosition.getY() - distance);
-        } else if (currentDirection == Direction.LEFT) {
-            currentPosition.setX(currentPosition.getX() - distance);
-        } else {
-            currentPosition.setX(currentPosition.getX() + distance);
-        }
-
-        return currentPosition;
-    }
-
     private int determineDistance(Point currentPosition, Point end, Direction currentDirection, Tuple<Integer, Integer> dims) {
         //determine distance to travel per segment
         //think of implementing method based on PCB size so that you always achieve great results
@@ -118,15 +107,6 @@ public class Path {
         } else {
             return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
         }
-//        if(currentDirection == Direction.UP) {
-//            return (int) (Math.random() * (dims.getSecond() - currentPosition.getY())) + 1;
-//        } else if(currentDirection == Direction.DOWN) {
-//            return r.nextInt(currentPosition.getY());
-//        } else if(currentDirection == Direction.LEFT) {
-//            return r.nextInt(currentPosition.getX());
-//        } else {
-//            return (int) (Math.random() * (dims.getFirst() - currentPosition.getX())) + 1;
-//        }
     }
 
     private Direction determineDirection(Point currentPosition, Point endPosition, Direction previousDirection, int pcbWidth, int pcbHeight) {
@@ -185,4 +165,18 @@ public class Path {
         return chosenDirection.getFirst();
     }
 
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        Path clone = (Path)super.clone();
+        clone.segments = new ArrayList<>();
+        for(Tuple<Direction, Integer> segment: this.segments) {
+            clone.segments.add((Tuple)segment.clone());
+        }
+        clone.length = this.length;
+        clone.points = new ArrayList<>();
+        for(Point p: this.points) {
+            clone.points.add((Point)p.clone());
+        }
+        return clone;
+    }
 }

@@ -18,7 +18,7 @@ import java.util.Map;
 
 
 @Data
-public class PCBIndividual {
+public class PCBIndividual implements Cloneable{
     private int pcbWidth;
     private int pcbHeight;
     private List<Tuple<Point, Point>> points;
@@ -40,13 +40,18 @@ public class PCBIndividual {
         this.population = new ArrayList<>();
     }
 
-    public PCBIndividual(PCBIndividual individual) {
-        this.pcbWidth = individual.pcbWidth;
-        this.pcbHeight = individual.pcbHeight;
-        this.points = individual.points;
-        this.population = individual.population;
-        this.fitness = individual.fitness;
-        this.inters = individual.inters;
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        PCBIndividual clone = (PCBIndividual)super.clone();
+        clone.points = new ArrayList<>();
+        clone.population = new ArrayList<>();
+        for(Tuple<Point, Point> p: this.points) {
+            clone.points.add((Tuple)p.clone());
+        }
+        for(Path p: population) {
+            clone.population.add((Path)p.clone());
+        }
+        return clone;
     }
 
     public void initPopulation(int maxStepsToFindAPath) {
@@ -216,4 +221,14 @@ public class PCBIndividual {
         return point.getX() > pcbWidth || point.getX() < 0
                || point.getY() > pcbHeight || point.getY() < 0;
     }
+
+//    public PCBIndividual clone() {
+//        PCBIndividual clone = new PCBIndividual();
+//        clone.pcbWidth = this.pcbWidth;
+//        clone.pcbHeight = this.pcbHeight;
+//        clone.points = ;
+//        clone.population;
+//        clone.fitness = this.fitness;
+//        clone.inters = this.inters;
+//    }
 }
