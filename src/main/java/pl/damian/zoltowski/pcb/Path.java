@@ -21,7 +21,7 @@ public class Path implements Cloneable{
     private List<Point> points;
 
 
-    public Path generateRandomPath(Tuple<Point, Point> positions, int maxSteps, Tuple<Integer, Integer> dims) {
+    public Path generateRandomPath(Tuple<Point, Point> positions, int maxSteps, Tuple<Integer, Integer> dims) throws CloneNotSupportedException {
         Point start = positions.getFirst();
         Point end = positions.getSecond();
         List<Tuple<Direction, Integer>> path = new ArrayList<>();
@@ -48,7 +48,7 @@ public class Path implements Cloneable{
             currentDirection = determineDirection(currentPosition, end, previousDirection, dims.getFirst(), dims.getSecond());
             int distance = determineDistance(currentPosition, end, currentDirection, dims);
             path.add(new Tuple<>(currentDirection, distance));
-            helper = calculateNewPositionAndPoints(currentPosition, currentDirection, distance);
+            helper = calculateNewPositionAndPoints(currentPosition, currentDirection, distance, end);
             currentPosition = helper.getFirst();
             points.addAll(helper.getSecond());
             previousDirection = currentDirection;
@@ -59,43 +59,55 @@ public class Path implements Cloneable{
         return new Path(path, length, points);
     }
 
-    public List<Point> getPointsFromSegments(Point start, Point end, List<Tuple<Direction, Integer>> segments) {
+    public List<Point> getPointsFromSegments(Point start, Point end, List<Tuple<Direction, Integer>> segments) throws CloneNotSupportedException {
         List<Point> points = new ArrayList<>();
         Point currentPos = start;
         points.add(start);
         for(Tuple<Direction, Integer> segment: segments) {
-            Tuple<Point, List<Point>> newPositionAndPoints = calculateNewPositionAndPoints(currentPos, segment.getFirst(), segment.getSecond());
+            Tuple<Point, List<Point>> newPositionAndPoints = calculateNewPositionAndPoints(currentPos, segment.getFirst(), segment.getSecond(), end);
             currentPos = newPositionAndPoints.getFirst();
             points.addAll(newPositionAndPoints.getSecond());
         }
         return points;
     }
 
-    private Tuple<Point, List<Point>> calculateNewPositionAndPoints(Point currentPosition, Direction currentDirection, int distance) {
+    private Tuple<Point, List<Point>> calculateNewPositionAndPoints(Point currentPosition, Direction currentDirection, int distance, Point end) throws CloneNotSupportedException {
         List<Point> points = new ArrayList<>();
         if(currentDirection == Direction.UP) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX(), currentPosition.getY() + i));
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
             }
             currentPosition.setY(currentPosition.getY() + distance);
         } else if (currentDirection == Direction.DOWN) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX(), currentPosition.getY() - i));
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
             }
             currentPosition.setY(currentPosition.getY() - distance);
         } else if (currentDirection == Direction.LEFT) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX() - i, currentPosition.getY()));
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
             }
             currentPosition.setX(currentPosition.getX() - distance);
         } else {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX() + i, currentPosition.getY()));
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
             }
             currentPosition.setX(currentPosition.getX() + distance);
         }
 
-        return new Tuple(currentPosition, points);
+        return new Tuple(currentPosition.clone(), points);
     }
 
     private int determineDistance(Point currentPosition, Point end, Direction currentDirection, Tuple<Integer, Integer> dims) {
@@ -103,9 +115,11 @@ public class Path implements Cloneable{
         //think of implementing method based on PCB size so that you always achieve great results
         Random r = new Random();
         if(currentDirection == Direction.DOWN || currentDirection == Direction.UP) {
-            return (int) (Math.random() * (Math.abs(currentPosition.getY() - dims.second))) + 1;
+//            return (int) (Math.random() * (Math.abs(currentPosition.getY() - dims.second))) + 1;
+            return (int) (Math.random() * (Math.abs(end.getY() - currentPosition.getY()))) + 1;
         } else {
-            return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
+//            return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
+            return (int) (Math.random() * (Math.abs(end.getX() - currentPosition.getX()))) + 1;
         }
     }
 
@@ -179,4 +193,47 @@ public class Path implements Cloneable{
         }
         return clone;
     }
+
+    public void calculateLength() {
+        this.length = this.segments.stream().mapToInt(Tuple::getSecond).sum();
+    }
+
+//    private Tuple<Point, List<Point>> calculateNewPositionAndPoints(Point currentPosition, Direction currentDirection, int distance, Point end) {
+//        List<Point> points = new ArrayList<>();
+//        if(currentDirection == Direction.UP) {
+//            for(int i = 0; i < distance; i++) {
+//                points.add(new Point(currentPosition.getX(), currentPosition.getY() + i));
+//                currentPosition.setY(currentPosition.getY() + 1);
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
+//            }
+//        } else if (currentDirection == Direction.DOWN) {
+//            for(int i = 0; i < distance; i++) {
+//                points.add(new Point(currentPosition.getX(), currentPosition.getY() - i));
+//                currentPosition.setY(currentPosition.getY() - 1);
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
+//            }
+//        } else if (currentDirection == Direction.LEFT) {
+//            for(int i = 0; i < distance; i++) {
+//                points.add(new Point(currentPosition.getX() - i, currentPosition.getY()));
+//                currentPosition.setX(currentPosition.getX() - 1);
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
+//            }
+//        } else {
+//            for(int i = 0; i < distance; i++) {
+//                points.add(new Point(currentPosition.getX() + i, currentPosition.getY()));
+//                currentPosition.setX(currentPosition.getX() + 1);
+//                if(currentPosition.isSame(end)){
+//                    break;
+//                }
+//            }
+//        }
+//
+//        return new Tuple(currentPosition, points);
+//    }
 }

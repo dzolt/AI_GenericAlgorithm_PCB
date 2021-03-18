@@ -54,7 +54,7 @@ public class PCBIndividual implements Cloneable{
         return clone;
     }
 
-    public void initPopulation(int maxStepsToFindAPath) {
+    public void initPopulation(int maxStepsToFindAPath) throws CloneNotSupportedException {
         //for each pair of points that is present on the board
         Tuple<Integer, Integer> dims = new Tuple<>(pcbWidth, pcbHeight);
         for (int i = 0; i < points.size(); i++) {
@@ -117,7 +117,7 @@ public class PCBIndividual implements Cloneable{
         return sumOfPaths;
     }
 
-    private int calculateLength() {
+    public int calculateLength() {
         return population.stream().mapToInt(Path::getLength).sum();
     }
 

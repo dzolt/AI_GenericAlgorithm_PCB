@@ -24,13 +24,14 @@ import java.util.List;
 public class GenericAlgorithmPCBApplication {
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        Config config = new Config().readConfigFromFile("zad0.txt");
+        Config config = new Config().readConfigFromFile("zad1.txt");
         System.out.println(config);
         List<PCBIndividual> population = new ArrayList<>();
         SelectionAlgorithm selectionAlgorithm = new RouletteSelection();
         PythonProcessBuilder pythonProcessBuilder = new PythonProcessBuilder();
         CrossOverAlgorithm crossing = new MultiPointCrossover();
         MutationAlgorithm mutation = new MutationA();
+//        MutationAlgorithm mutation = new SimpleMutation();
         List<PCBIndividual> bestFromPopulations = new ArrayList<>();
 
 //         create population consisting of POPULATION_SIZE PCBIndividuals

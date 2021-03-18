@@ -11,7 +11,7 @@ public class Constants {
      */
     public final static int MAX_STEPS_INDIVIDUAL_GENERATION = 100;
     public final static int PROBABILITY_OF_DIRECTION_INCREASE = 3;
-    public final static int POPULATION_SIZE = 20;
+    public final static int POPULATION_SIZE = 10_000;
     public final static int POPULATION_OPERATORS_STOP_CONDITION = 30;
     public final static double CROSS_OVER_PROBABILITY = 0.7;
     public final static double MUTATION_PROBABILITY = 0.01;
@@ -20,10 +20,10 @@ public class Constants {
     /**
      * FITNESS CONSTANTS
      */
-    public final static double INTERSECTION_PENALTY = 35.0;
+    public final static double INTERSECTION_PENALTY = 56.0;
     public final static double LENGTH_OUT_OF_BOARD_PENALTY = 16.7;
-    public final static double SEGMENTS_OUT_OF_BOARD_PENALTY = 19.5;
-    public final static double LENGTH_PENALTY = 9.0;
+    public final static double SEGMENTS_OUT_OF_BOARD_PENALTY = 7.5;
+    public final static double LENGTH_PENALTY = 0.5;
 
 
 
