@@ -10,6 +10,7 @@ import pl.damian.zoltowski.pcb.PCBIndividual;
 import pl.damian.zoltowski.pcb.Path;
 import pl.damian.zoltowski.selection.RouletteSelection;
 import pl.damian.zoltowski.selection.SelectionAlgorithm;
+import pl.damian.zoltowski.selection.TournamentSelection;
 import pl.damian.zoltowski.utils.Config;
 import pl.damian.zoltowski.utils.Constants;
 import pl.damian.zoltowski.utils.dataType.Point;
@@ -49,6 +50,7 @@ public class GenericAlgorithmPCBApplication {
            while(newPopulation.size() != population.size()) {
                PCBIndividual parent1 = selectionAlgorithm.select(population);
                PCBIndividual parent2 = selectionAlgorithm.select(population);;
+//               PCBIndividual parent2 = new TournamentSelection(5).select(population);
                PCBIndividual child = crossing.cross(parent1, parent2);
                child = mutation.mutate(child);
                child.calculateFitness();
@@ -61,7 +63,6 @@ public class GenericAlgorithmPCBApplication {
 
         int index = 0;
         for(PCBIndividual best: bestFromPopulations) {
-//            System.out.println(best);
             best.saveIndividualToFile("population" + index + ".json");
             pythonProcessBuilder.generatePCBImageToFile("population" + index + ".json", "population" + index + ".png");
             index++;

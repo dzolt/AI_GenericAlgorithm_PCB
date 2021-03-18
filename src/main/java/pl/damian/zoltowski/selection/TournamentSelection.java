@@ -1,5 +1,6 @@
 package pl.damian.zoltowski.selection;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import pl.damian.zoltowski.pcb.PCBIndividual;
 
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 
 @Data
+@AllArgsConstructor
 public class TournamentSelection implements SelectionAlgorithm {
     private int K;
 

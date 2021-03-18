@@ -76,37 +76,24 @@ public class Path implements Cloneable{
         if(currentDirection == Direction.UP) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX(), currentPosition.getY() + i));
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
             }
             currentPosition.setY(currentPosition.getY() + distance);
         } else if (currentDirection == Direction.DOWN) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX(), currentPosition.getY() - i));
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
             }
             currentPosition.setY(currentPosition.getY() - distance);
         } else if (currentDirection == Direction.LEFT) {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX() - i, currentPosition.getY()));
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
             }
             currentPosition.setX(currentPosition.getX() - distance);
         } else {
             for(int i = 0; i < distance; i++) {
                 points.add(new Point(currentPosition.getX() + i, currentPosition.getY()));
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
             }
             currentPosition.setX(currentPosition.getX() + distance);
         }
-
         return new Tuple(currentPosition.clone(), points);
     }
 
@@ -115,10 +102,8 @@ public class Path implements Cloneable{
         //think of implementing method based on PCB size so that you always achieve great results
         Random r = new Random();
         if(currentDirection == Direction.DOWN || currentDirection == Direction.UP) {
-//            return (int) (Math.random() * (Math.abs(currentPosition.getY() - dims.second))) + 1;
             return (int) (Math.random() * (Math.abs(end.getY() - currentPosition.getY()))) + 1;
         } else {
-//            return (int) (Math.random() * (Math.abs(currentPosition.getX() - dims.first))) + 1;
             return (int) (Math.random() * (Math.abs(end.getX() - currentPosition.getX()))) + 1;
         }
     }
@@ -197,43 +182,4 @@ public class Path implements Cloneable{
     public void calculateLength() {
         this.length = this.segments.stream().mapToInt(Tuple::getSecond).sum();
     }
-
-//    private Tuple<Point, List<Point>> calculateNewPositionAndPoints(Point currentPosition, Direction currentDirection, int distance, Point end) {
-//        List<Point> points = new ArrayList<>();
-//        if(currentDirection == Direction.UP) {
-//            for(int i = 0; i < distance; i++) {
-//                points.add(new Point(currentPosition.getX(), currentPosition.getY() + i));
-//                currentPosition.setY(currentPosition.getY() + 1);
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
-//            }
-//        } else if (currentDirection == Direction.DOWN) {
-//            for(int i = 0; i < distance; i++) {
-//                points.add(new Point(currentPosition.getX(), currentPosition.getY() - i));
-//                currentPosition.setY(currentPosition.getY() - 1);
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
-//            }
-//        } else if (currentDirection == Direction.LEFT) {
-//            for(int i = 0; i < distance; i++) {
-//                points.add(new Point(currentPosition.getX() - i, currentPosition.getY()));
-//                currentPosition.setX(currentPosition.getX() - 1);
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
-//            }
-//        } else {
-//            for(int i = 0; i < distance; i++) {
-//                points.add(new Point(currentPosition.getX() + i, currentPosition.getY()));
-//                currentPosition.setX(currentPosition.getX() + 1);
-//                if(currentPosition.isSame(end)){
-//                    break;
-//                }
-//            }
-//        }
-//
-//        return new Tuple(currentPosition, points);
-//    }
 }
