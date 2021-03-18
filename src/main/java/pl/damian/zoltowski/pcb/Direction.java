@@ -5,5 +5,17 @@ public enum Direction {
     RIGHT,
     UP,
     DOWN,
-    UNKNOWN
+    UNKNOWN;
+
+    public Direction getOpposite() {
+        if(this == LEFT) {
+            return RIGHT;
+        } else if(this == RIGHT) {
+            return LEFT;
+        } else if(this == DOWN){
+            return UP;
+        } else {
+            return DOWN;
+        }
+    }
 }
