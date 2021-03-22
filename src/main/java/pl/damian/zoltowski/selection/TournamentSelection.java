@@ -33,4 +33,8 @@ public class TournamentSelection implements SelectionAlgorithm {
 
         return selectedCandidates.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get();
     }
+
+    public int getK() {
+        return this.K;
+    }
 }

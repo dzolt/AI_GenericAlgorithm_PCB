@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -125,7 +126,7 @@ public class PCBIndividual implements Cloneable{
         GsonBuilder gsonBuilder = new GsonBuilder();
         JsonSerializer<PCBIndividual> serializer = new PCBJsonSerializer();
         gsonBuilder.registerTypeAdapter(PCBIndividual.class, serializer);
-        String filePath = System.getProperty("user.dir") + "\\src\\main\\java\\pl\\damian\\zoltowski\\visualization\\data\\" + fileName;
+        String filePath = System.getProperty("user.dir") + "\\src\\main\\java\\pl\\damian\\zoltowski\\visualization\\data\\board\\" + fileName;
         try (Writer writer = new FileWriter(filePath)) {
             gsonBuilder.create().toJson(this, writer);
         }
@@ -222,13 +223,5 @@ public class PCBIndividual implements Cloneable{
                || point.getY() > pcbHeight || point.getY() < 0;
     }
 
-//    public PCBIndividual clone() {
-//        PCBIndividual clone = new PCBIndividual();
-//        clone.pcbWidth = this.pcbWidth;
-//        clone.pcbHeight = this.pcbHeight;
-//        clone.points = ;
-//        clone.population;
-//        clone.fitness = this.fitness;
-//        clone.inters = this.inters;
-//    }
+
 }
