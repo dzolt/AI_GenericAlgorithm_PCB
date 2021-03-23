@@ -33,15 +33,14 @@ import java.util.List;
 public class GenericAlgorithmPCBApplication {
 
     public static void main(String[] args) throws CloneNotSupportedException {
-        Config config = new Config().readConfigFromFile("zad1.txt");
-        System.out.println(config);
+//        Config config = new Config().readConfigFromFile("prod2.txt");
+        Config config = new Config().readConfigFromFile("prod1.txt");
+        PythonProcessBuilder pythonProcessBuilder = new PythonProcessBuilder();
         List<PCBIndividual> population = new ArrayList<>();
         SelectionAlgorithm selectionAlgorithm = new RouletteSelection();
 //        SelectionAlgorithm selectionAlgorithm = new TournamentSelection();
-        PythonProcessBuilder pythonProcessBuilder = new PythonProcessBuilder();
         CrossOverAlgorithm crossing = new MultiPointCrossover();
         MutationAlgorithm mutation = new MutationA();
-//        MutationAlgorithm mutation = new SimpleMutation();
         List<PCBIndividual> bestFromPopulations = new ArrayList<>();
         GraphRepresentation graphRepresentation = new GraphRepresentation();
         graphRepresentation.pcbWidth = config.getPcb_width();
@@ -52,8 +51,8 @@ public class GenericAlgorithmPCBApplication {
             graphRepresentation.selectionOP = "Ruletka";
         }
 
-
 //         create population consisting of POPULATION_SIZE PCBIndividuals
+        long startTime = System.currentTimeMillis();
         for (int i = 0; i < Constants.POPULATION_SIZE; i++) {
             PCBIndividual individual = new PCBIndividual(config);
             individual.initPopulation(Constants.MAX_STEPS_INDIVIDUAL_GENERATION);
@@ -64,48 +63,38 @@ public class GenericAlgorithmPCBApplication {
         bestFromPopulations.add(population.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get());
 
         for (int i = 0; i < Constants.POPULATION_OPERATORS_STOP_CONDITION; i++) {
-           List<PCBIndividual> newPopulation = new ArrayList<>();
-           while(newPopulation.size() != population.size()) {
-               PCBIndividual parent1 = selectionAlgorithm.select(population);
-               PCBIndividual parent2 = selectionAlgorithm.select(population);;
-//               PCBIndividual parent2 = new TournamentSelection(5).select(population);
-               PCBIndividual child = crossing.cross(parent1, parent2);
-               child = mutation.mutate(child);
-               child.calculateFitness();
-               newPopulation.add(child);
-           }
-           bestFromPopulations.add(newPopulation.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get());
-           population = newPopulation;
-           System.out.println("POPULATION " + i);
-           graphRepresentation.maximums.add(newPopulation.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
-           graphRepresentation.minimums.add(newPopulation.stream().max(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
-           graphRepresentation.avgs.add(newPopulation.stream().mapToDouble(PCBIndividual::getFitness).average().orElse(0.0));
-        }
+            List<PCBIndividual> newPopulation = new ArrayList<>();
+            while (newPopulation.size() != population.size()) {
+                PCBIndividual parent1 = selectionAlgorithm.select(population);
+                PCBIndividual parent2 = selectionAlgorithm.select(population);
 
+//               PCBIndividual parent2 = new TournamentSelection(5).select(population);
+                PCBIndividual child = crossing.cross(parent1, parent2);
+                child = mutation.mutate(child);
+                child.calculateFitness();
+                newPopulation.add(child);
+            }
+            bestFromPopulations.add(newPopulation.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get());
+            population = newPopulation;
+            System.out.println("POPULATION " + i);
+            graphRepresentation.maximums.add(newPopulation.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
+            graphRepresentation.minimums.add(newPopulation.stream().max(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
+            graphRepresentation.avgs.add(newPopulation.stream().mapToDouble(PCBIndividual::getFitness).average().orElse(0.0));
+        }
+        float timeElapsed = (System.currentTimeMillis() - startTime) / 1000F;
         int index = 0;
-        for(PCBIndividual best: bestFromPopulations) {
+        for (PCBIndividual best : bestFromPopulations) {
             best.saveIndividualToFile("population" + index + ".json");
             pythonProcessBuilder.generatePCBImageToFile("population" + index + ".json", "population" + index + ".png");
             index++;
         }
 
-       graphRepresentation.saveIndividualToFile("graph.json");
+        graphRepresentation.saveIndividualToFile("graph.json");
         pythonProcessBuilder.generatePCBChartImageToFile("graph.json", "graph.png");
 
-//            for(int i = 0; i < 10; i++) {
-//                PCBIndividual ind = new PCBIndividual(config);
-//                ind.initPopulation(Constants.MAX_STEPS_INDIVIDUAL_GENERATION);
-//                ind.calculateFitness();
-//                System.out.println(ind);
-//                System.out.println("POP " + i + " FITNESS " + ind.getFitness());
-//                ind.saveIndividualToFile("ind" + i + ".json");
-//                pythonProcessBuilder.generatePCBImageToFile("ind" + i + ".json", "ind" + i + ".png");
-//                ind = mutation.mutate(ind);
-//                System.out.println("MUTATED");
-//                System.out.println(ind);
-//                System.out.println("MUTATED POP " + i + " FITNESS " + ind.getFitness());
-//                ind.saveIndividualToFile("mut" + i + ".json");
-//                pythonProcessBuilder.generatePCBImageToFile("mut" + i + ".json", "mut" + i + ".png");
-//            }
+        System.out.println("BEST: " + bestFromPopulations.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
+        System.out.println("WORST: " + bestFromPopulations.stream().max(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
+        System.out.println("AVERAGE: " + bestFromPopulations.stream().mapToDouble(PCBIndividual::getFitness).average().getAsDouble());
+        System.out.println("TIME ELAPSED: " + timeElapsed + " seconds");
     }
 }

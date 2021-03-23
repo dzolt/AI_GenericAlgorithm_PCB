@@ -50,9 +50,6 @@ public class PCBJsonSerializer implements JsonSerializer<PCBIndividual> {
         }
 
         jsonPCB.add("board", board);
-        if (src.getFitness() == 0) {
-            src.calculateFitness();
-        }
         jsonPCB.addProperty("fitness", src.getFitness());
         jsonPCB.add("points", points);
         jsonPCB.add("paths", paths);

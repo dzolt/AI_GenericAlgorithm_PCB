@@ -77,6 +77,10 @@ public class MutationA implements MutationAlgorithm {
                             previousSegment.setSecond(previousSegment.getSecond() + Constants.MUTATION_MAX_MOVE_SEGMENT);
                         } else {
                             previousSegment.setSecond(previousSegment.getSecond() - Constants.MUTATION_MAX_MOVE_SEGMENT);
+                            if(previousSegment.getSecond() == 0) {
+                                path.getSegments().remove(previousSegment);
+                                segmentToMutateIndex--;
+                            }
                         }
                     }
                 }
