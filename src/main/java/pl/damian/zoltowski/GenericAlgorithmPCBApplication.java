@@ -33,12 +33,11 @@ import java.util.List;
 public class GenericAlgorithmPCBApplication {
 
     public static void main(String[] args) throws CloneNotSupportedException {
-//        Config config = new Config().readConfigFromFile("prod2.txt");
-        Config config = new Config().readConfigFromFile("prod1.txt");
+        Config config = new Config().readConfigFromFile("zad3.txt");
         PythonProcessBuilder pythonProcessBuilder = new PythonProcessBuilder();
         List<PCBIndividual> population = new ArrayList<>();
         SelectionAlgorithm selectionAlgorithm = new RouletteSelection();
-//        SelectionAlgorithm selectionAlgorithm = new TournamentSelection();
+//        SelectionAlgorithm selectionAlgorithm = new TournamentSelection(5);
         CrossOverAlgorithm crossing = new MultiPointCrossover();
         MutationAlgorithm mutation = new MutationA();
         List<PCBIndividual> bestFromPopulations = new ArrayList<>();
@@ -68,7 +67,6 @@ public class GenericAlgorithmPCBApplication {
                 PCBIndividual parent1 = selectionAlgorithm.select(population);
                 PCBIndividual parent2 = selectionAlgorithm.select(population);
 
-//               PCBIndividual parent2 = new TournamentSelection(5).select(population);
                 PCBIndividual child = crossing.cross(parent1, parent2);
                 child = mutation.mutate(child);
                 child.calculateFitness();
@@ -93,8 +91,9 @@ public class GenericAlgorithmPCBApplication {
         pythonProcessBuilder.generatePCBChartImageToFile("graph.json", "graph.png");
 
         System.out.println("BEST: " + bestFromPopulations.stream().min(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
-        System.out.println("WORST: " + bestFromPopulations.stream().max(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
         System.out.println("AVERAGE: " + bestFromPopulations.stream().mapToDouble(PCBIndividual::getFitness).average().getAsDouble());
+        System.out.println("WORST: " + bestFromPopulations.stream().max(Comparator.comparing(PCBIndividual::getFitness)).get().getFitness());
+
         System.out.println("TIME ELAPSED: " + timeElapsed + " seconds");
     }
 }

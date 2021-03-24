@@ -37,8 +37,7 @@ class ChartDrawer:
         y_data_avgs = self.avgs
 
 
-        plt.figure(figsize=(20, 12))
-        plt.subplots_adjust(bottom=0.25, top=0.95)
+        plt.figure(figsize=(18, 10))
 
         # put maxis line
         plt.plot(x_data, y_data_maxis, label='Najepszy osobnik')
@@ -54,35 +53,11 @@ class ChartDrawer:
         plt.ylabel(y_label)
 
         # display title and legend
-        plt.title('Zestawienie 16 generacji najlepszych, najgorszych i średnich osobników')
+        plt.title('Zestawienie 10 generacji najlepszych, najgorszych i średnich osobników')
         plt.legend()
 
-        info_1, info_2, info_3 = self.create_data_info()
-        props = dict(edgecolor='black', boxstyle='round,pad=1', facecolor='white')
 
-        # 1
-        plt.text(0.0, -0.3, info_1, bbox=props, verticalalignment='top')
-        # 2
-        plt.text(2.3, -0.3, info_2, bbox=props, verticalalignment='top')
-        # 3
-        plt.text(5.5, -0.3, info_3, verticalalignment='top', bbox=props)
-        # define fig size
         return plt
-
-    def create_data_info(self):
-        data_info_1 = "PCB rozmiar: {}x{}\nRozmiar pop.: {}\nLiczba pokoleń: {}"
-        data_info_1 = data_info_1.format(self.pcbWidth, self.pcbHeight, self.populationSize, self.populationGenres)
-        wages = [self.intersectionPenalty, self.segmentsOutOfBoardPenalty, self.lengthOutOfBoardPenalty, self.lengthPenalty]
-        data_info_2 = "Wagi: {}\nOperator sel.: {}\nPrawd. krzyżowania:: {}%"
-        data_info_2 = data_info_2.format(wages, self.operator_name, self.crossOverProbability * 100)
-
-        data_info_3 = "Prawd. mutacji: {}%\nSiła mutacji: {}\n"
-        data_info_3 = data_info_3.format(self.mutationProbability * 100, self.mutationMaxMoveSegment)
-
-        return data_info_1, data_info_2, data_info_3
-
-
-
 
 
 def run_programm():
